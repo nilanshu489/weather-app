@@ -25,14 +25,8 @@ A responsive **React Weather Dashboard** that fetches and displays real-time wea
 - 💽 **LocalStorage** for data persistence
 - 🎨 **CSS** for styling and responsiveness
 
----
+## 🌍 Live Demo
+👉 [https://weather-dashboard.vercel.app](https://weather-dashboard.vercel.app)
 
-Deployment Link:
-
-
-
-Screenshot:
-
-
-
-Deployment Link
+## Screenshot
+![alt text](image.png)
