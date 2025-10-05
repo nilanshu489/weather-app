@@ -9,7 +9,7 @@ html, body, #root {
 
 
 
-
+/* Fill window, center everything */
 .app-container {
   min-height: 100vh;
   width: 100vw;
@@ -20,10 +20,10 @@ html, body, #root {
   padding-top: 40px;
   box-sizing: border-box;
   background: transparent;
- 
+  /* Remove white background so it uses main bg */
 }
 
-
+/* Dashboard card with transparency */
 .dash-card {
   width: 100%;
   max-width: 500px;
@@ -34,7 +34,7 @@ html, body, #root {
   margin-bottom: 28px;
 }
 
-
+/* Big colorful title */
 .title {
   font-weight: 900;
   font-size: 40px;
@@ -44,7 +44,7 @@ html, body, #root {
   letter-spacing: 2px;
 }
 
-
+/* Form and buttons */
 .input-group {
   display: flex;
   margin-bottom: 20px;

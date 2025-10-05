@@ -1,33 +1,40 @@
+// Import core React libraries and dependencies
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+
+// Import the temperature trend chart component and background image from src
 import WeatherTrendChart from "./WeatherTrendChart";
-import weatherBg from "./weather-bg.jpg"; 
+import weatherBg from "./weather-bg.jpg";
 import "./App.css";
 
+// OpenWeatherMap API key 
 const API_KEY = "a2fdecb72c7f0557980b211aac40ea59";
 
+// Main weather dashboard component
 function App() {
+  // State hooks for city input, temperature units, fetched data & error message
   const [city, setCity] = useState("");
   const [units, setUnits] = useState("metric");
   const [weather, setWeather] = useState(null);
   const [forecast, setForecast] = useState([]);
   const [error, setError] = useState("");
 
+  // On mount: Check for last searched city in local storage and fetch its weather
   useEffect(() => {
     const lastCity = localStorage.getItem("lastCity");
     if (lastCity) {
       setCity(lastCity);
       fetchWeather(lastCity, units);
     }
-    
-    
+    // Only run once on mount
   }, []);
 
+  // When units change (C<->F): if city is set, update its weather/forecast
   useEffect(() => {
     if (city) fetchWeather(city, units);
-    
   }, [units]);
-
+ 
+  // Fetches current weather & 5-day forecast for the given city
   const fetchWeather = async (cityName, unitsType = "metric") => {
     if (!cityName) {
       setError("Please enter a city name.");
@@ -37,12 +44,14 @@ function App() {
     setWeather(null);
     setForecast([]);
     try {
+      // Fetch current weather
       const weatherRes = await axios.get(
         `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${API_KEY}&units=${unitsType}`
       );
       setWeather(weatherRes.data);
       localStorage.setItem("lastCity", cityName);
 
+      // Fetch forecast (every 8th result for one per day)
       const forecastRes = await axios.get(
         `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&appid=${API_KEY}&units=${unitsType}`
       );
@@ -53,17 +62,20 @@ function App() {
     }
   };
 
+  // Form submit: fetch data for the user-typed city & unit
   const handleSearch = (e) => {
     e.preventDefault();
     fetchWeather(city, units);
   };
 
+  // Toggle temperature units and update data if city already set
   const toggleUnits = () => {
     setUnits(units === "metric" ? "imperial" : "metric");
     if (city) fetchWeather(city, units === "metric" ? "imperial" : "metric");
   };
 
   return (
+    // App root: full-screen background image and center content
     <div
       style={{
         minHeight: "100vh",
@@ -78,17 +90,20 @@ function App() {
         overflow: "hidden"
       }}
     >
+      {/* Main glassmorphic card holding all UI */}
       <div
         className="dash-card"
         style={{
-          height: "90vh", 
-          overflowY: "auto", 
+          height: "90vh",            // Fit almost entire screen vertically
+          overflowY: "auto",         // Only scroll inside panel if needed
           width: "100%",
           maxWidth: "520px",
           boxSizing: "border-box"
         }}
       >
         <h1 className="title">Weather Dashboard</h1>
+
+        {/* Weather search bar */}
         <form className="input-group" onSubmit={handleSearch}>
           <input
             type="text"
@@ -98,11 +113,16 @@ function App() {
           />
           <button type="submit">🔍</button>
         </form>
+
+        {/* Units toggle button */}
         <button className="unit-toggle" onClick={toggleUnits}>
           {units === "metric" ? "🌡️ Show Fahrenheit" : "🌡️ Show Celsius"}
         </button>
+
+        {/* Error message, if present */}
         {error && <p className="error-message">{error}</p>}
 
+        {/* Weather info and chart (only when both present) */}
         {weather && forecast.length > 0 && (
           <div
             style={{
@@ -114,6 +134,7 @@ function App() {
               flexWrap: "wrap",
             }}
           >
+            {/* Main weather information card */}
             <div
               style={{
                 flex: "0 0 260px",
@@ -135,11 +156,13 @@ function App() {
               >
                 🌍 {weather.name}, {weather.sys.country}
               </h2>
+              {/* Weather icon */}
               <img
                 src={`http://openweathermap.org/img/wn/${weather.weather[0].icon}@4x.png`}
                 style={{ width: 95 }}
                 alt={weather.weather[0].description}
               />
+              {/* Temperature */}
               <div
                 style={{
                   fontSize: 50,
@@ -150,6 +173,7 @@ function App() {
               >
                 🌡️ {Math.round(weather.main.temp)}°{units === "metric" ? "C" : "F"}
               </div>
+              {/* Weather description */}
               <div
                 style={{
                   fontSize: 18,
@@ -160,6 +184,7 @@ function App() {
               >
                 {weather.weather[0].description}
               </div>
+              {/* Additional details: humidity & wind */}
               <div
                 style={{
                   display: "flex",
@@ -176,6 +201,8 @@ function App() {
                 </span>
               </div>
             </div>
+
+            {/* Temperature trend chart, side-by-side on large screens */}
             <div
               style={{
                 flex: "1 1 330px",
@@ -193,6 +220,7 @@ function App() {
           </div>
         )}
 
+        {/* 5-Day Weather Forecast cards */}
         {forecast.length > 0 && (
           <div className="forecast">
             <h3>5-Day Weather Forecast</h3>
